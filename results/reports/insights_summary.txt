@@ -1,0 +1,9 @@
+Insights Summary - generated 2025-08-12 20:14
+Top equipment by failures:
+ - FIRE PROTECTION/FIGHTING SYSTEM,CPF: 76 failures, cumulative 1.16%
+ - FIRE PROTECTION/FIGHTING SYSTEM, KOLS2: 66 failures, cumulative 2.16%
+ - POINT GAS DETECTOR CNDST SPIKING PUMP: 38 failures, cumulative 2.74%
+ - GBARAN UBIE OIL & GAS INTEGRETED FACILTY: 32 failures, cumulative 3.22%
+ - 74PZT-221,FIRE SYSTEM,CPF: 28 failures, cumulative 3.65%
+
+Model comparison (best model): LogisticRegression with CV mean acc 0.880 and test acc 0.881
