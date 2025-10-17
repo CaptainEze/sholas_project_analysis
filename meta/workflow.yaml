@@ -1,0 +1,69 @@
+phase 1: Data Collection and Preprocessing
+ step 1: Collection
+   ...
+   ...
+   ...
+
+ step 2: Preprocessing
+    - Renamed the 5 sheets based on their content and use to the research work 
+      - Maintenance_Log_1
+      - Maintenance_Log_2
+      - Failure_Summary
+      - Reliability_Metrics
+      - Maintenance_Plans
+   - Data Preprocessing
+      - Combined: [Maintenance_Log_1, Maintenance_Log_2] = Combined_Logs
+      - Using excel duplicate data was removed on columns: [Order | Functional Location] in Combined_Logs
+         - 3573 duplicate values found and removed; 6642 unique values remain (Image of excel promp available)
+   - Data Conversion
+      - Formarted Date fields in Combined_Logs to "yyyy-mm-dd"
+   - Handle Missing Data
+      - populated the blank cells of `Estimated costs` with the median of the column
+      - populated the blank cells of `Actual Finish Time` with the mode of the column
+   - Pivot Table
+      - created a pivot table in a new sheet: Summary from colums [FunctLocDescrip | Priority]
+   - Used Preprocessing Scripts with python
+      Objective 1 (Data Analytics): Cleaned data enables EDA with visualizations.
+      Objective 2 (Predictive Models): Valid data supports feature engineering.
+      Objective 3 (Performance/Risk): Merge enables MTBF/MTTR analysis.
+      Objective 4 (Cost-Effectiveness): Accurate rows support cost analysis.
+   - Handling Missing values after merge to fix Nan Values
+      If Data Exists in Reliability_Metrics:
+         Impute NaN values with the median of matched rows, setting unmatched to 0 (as in the previous EDA script).
+      If No Data Exists:
+         Calculate Failure rate (e.g., failures per Functional Location over time), MTBF (mean time between failures), and MTTR (mean time to repair) from Combined_Logs using Actual Finish Date and Estimated costs (for repair duration proxy).
+
+phase 2: EDA
+   step1:
+      EDA functions
+      Generated plots and EDA Summary
+
+phase 3: Predictive Modeling
+   Time_Diff, Priority, Estimated costs, Failure rate, MTBF, and MTTR to build a predictive model.
+   step1: Random Forest Classifier
+   (Insights and Observations)
+      Performance: The model excels at predicting non-failures (Class 0), but struggles with failures (Class 1), likely due to class imbalance (1159 vs. 157 instances). This is common in maintenance datasets where failures are rare.
+      Target Definition: The Target variable (1 if Time_Diff ≤ 90 days, 0 otherwise) uses a 90-day threshold, which may need adjustment based on your maintenance planning horizon (e.g., 30 or 180 days).
+      Feature Impact: The current features (Priority, Estimated costs, Failure rate, MTBF, MTTR) are effective, but the low recall for Class 1 suggests potential underrepresentation of failure predictors. Adding categorical features (e.g., FunctLocDescrip. encoded) might help.
+   (Refinement Options)
+      Address Class Imbalance: Use techniques like oversampling (e.g., SMOTE) or class weights in the Random Forest.
+         Update modeling_rf.py to include class_weight='balanced' in RandomForestClassifier.
+      Adjust Target Threshold: Modify the Time_Diff threshold (e.g., ≤ 30 days) to better align with your failure definition.
+      Feature Engineering: Encode Functional Location or FunctLocDescrip. using one-hot encoding to capture equipment-specific patterns.
+      Alternative Model: Try a logistic regression for comparison, especially if interpretability is needed.
+   
+   step2: Random Forest Classifier Improved:
+   (Insights and Observations)
+      Performance Impact: The addition of FunctLocDescrip. encoding and class_weight='balanced' did not improve recall for Class 1 (failures) as expected. The recall dropped from 0.31 to 0.24, suggesting the new features or weighting might not be effectively capturing failure patterns, possibly due to:
+      Overfitting or Feature Noise: The one-hot encoding of FunctLocDescrip. (2307 unique values) may introduce too many dimensions, diluting the model’s focus.
+      Class Imbalance Handling: The balanced weighting might not be optimal for this dataset’s imbalance (1159 vs. 157).
+      Threshold Sensitivity: The 90-day Time_Diff threshold might not align well with the failure distribution.
+      Stability: The overall accuracy (0.87) and Class 0 performance remained robust, indicating the model still excels at predicting non-failures.
+   (Refinement Options)
+      Reduce Feature Dimensions
+      Adjust Class Weighting
+      Tune Threshold
+   
+   step3: Random Forest Classifier Optimized:
+    Still drop in model performance
+    Switching to logistic regression
